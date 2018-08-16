@@ -38,15 +38,19 @@ CSV.foreach(filename) do |row|
 end
 
 puts exist_numbers
-insert_record = generate(6,3)
-puts "new numbers ".concat(insert_record)
-if !exist_numbers.include?(insert_record) 
+insert_record = "276274"
+while (exist_numbers.include?(insert_record)) do 
+    insert_record = generate(6,3)
+end 
+
+
     CSV.open(filename, "ab") do |csv|
-       
+        # generate a new row with value of new payment numbers     
         row = [].push(insert_record)
+        # insert the new row to existing csv file
         csv << row
     end
-end 
+
 
 
 # https://snippets.aktagon.com/snippets/246-how-to-parse-csv-data-with-ruby
