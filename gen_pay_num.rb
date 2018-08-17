@@ -43,19 +43,50 @@ class PaymentNum
         exist_numbers
     end 
     
-    def self.save(path, payment_num)
-                
-       
+    def self.save(path, digit_needed, x)
+        filename = File.dirname(File.dirname(File.expand_path(__FILE__))) + path
+        exist_numbers = self.read(path)
+        # check if this payment number is already exsited, if so generate another one until generate a non exsiting one
+        new_pay = self.new
+        insert_record = new_pay.generate(digit_needed, x)
+        while (exist_numbers.include?(insert_record)) do 
+            insert_record = new_pay.generate(digit_needed, x)
+            
+        end 
+        
+        # write to csv file as a new row
+        CSV.open(filename, "ab") do |csv|
+            # generate a new row with value of new payment numbers     
+            row = [].push(insert_record)
+            # insert the new row to existing csv file
+            csv << row
+        end        
+        puts insert_record
     end 
     
 end 
 
-puts PaymentNum.read('/payment-number/test_demo.csv')
+# puts PaymentNum.read('/payment-number/test_demo.csv')
 
+# PaymentNum.save('/payment-number/test_demo.csv', 10, 4)
 
-# num1 = PaymentNum.new
-# puts num1.generate(10,4)
+# test inserts the duplicated record into the csv file
+filename = File.dirname(File.dirname(File.expand_path(__FILE__))) + '/payment-number/test_demo.csv'
+exist_numbers = PaymentNum.read('/payment-number/test_demo.csv')
+insert_record = "4520501496"
+new_pay = PaymentNum.new
+while (exist_numbers.include?(insert_record)) do 
+    puts "Duplicated!"
+    insert_record = new_pay.generate(10, 4)
+end 
 
+CSV.open(filename, "ab") do |csv|
+    # generate a new row with value of new payment numbers     
+    row = [].push(insert_record)
+    # insert the new row to existing csv file
+    csv << row
+    end        
+puts insert_record
 
 # # use built-in CSV library to read csv file and save the existing numbers in an array exist_numbers
 # require 'csv'
@@ -86,6 +117,5 @@ puts PaymentNum.read('/payment-number/test_demo.csv')
 
 
 # write test
-# encapsulate into class
 
 # https://snippets.aktagon.com/snippets/246-how-to-parse-csv-data-with-ruby
