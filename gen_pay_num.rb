@@ -90,7 +90,7 @@ CSV.open(filename, "ab") do |csv|
 puts "newly generated payment number: #{insert_record}"
 puts "========================================================================"
 
-# ===============================================================
+# # Test case 2: generate a valid payment number and it can be saved to csv file
 puts "Test Case 2: generate a valid payment number and it can be saved to csv file"
 puts "=========================== previous csv file ==========================="
 puts PaymentNum.read('/payment-number/existing_payment_reference_numbers_x_4.csv')
