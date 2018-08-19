@@ -35,23 +35,27 @@ class PaymentNum
     end
     
     def self.read(path)
+        # create a variable with argument of path (where the csv file exists)
         filename = File.dirname(File.dirname(File.expand_path(__FILE__))) + path
+        # init exist_numbers as an empty array. exist_numbers is supposed to read from the csv file
         exist_numbers = []
+        # read from each row and push first column where payment numbers are to exist_numbers array.
         CSV.foreach(filename) do |row|
           exist_numbers << row[0]
         end
+        # return exist_numbers array
         exist_numbers
     end 
     
-    def self.save(path, digit_needed, x)
+    def save(path, digit_needed, x)
+        # create a variable with argument of path (where the csv file exists)
         filename = File.dirname(File.dirname(File.expand_path(__FILE__))) + path
-        exist_numbers = self.read(path)
+        # using class method to read all existing payment numbers in the given path(file)
+        exist_numbers = self.class.read(path)
         # check if this payment number is already exsited, if so generate another one until generate a non exsiting one
-        new_pay = self.new
-        insert_record = new_pay.generate(digit_needed, x)
+        insert_record = self.generate(digit_needed, x)
         while (exist_numbers.include?(insert_record)) do 
-            insert_record = new_pay.generate(digit_needed, x)
-            
+            insert_record = self.generate(digit_needed, x)
         end 
         
         # write to csv file as a new row
@@ -61,23 +65,20 @@ class PaymentNum
             # insert the new row to existing csv file
             csv << row
         end        
-        puts insert_record
+        puts "newly generated payment number: #{insert_record}"
     end 
     
 end 
 
-# puts PaymentNum.read('/payment-number/test_demo.csv')
 
-# PaymentNum.save('/payment-number/test_demo.csv', 10, 4)
-
-# test inserts the duplicated record into the csv file
-filename = File.dirname(File.dirname(File.expand_path(__FILE__))) + '/payment-number/test_demo.csv'
-exist_numbers = PaymentNum.read('/payment-number/test_demo.csv')
-insert_record = "4520501496"
-new_pay = PaymentNum.new
+# Test case 1: test inserts the duplicated record into the csv file
+puts "Test Case 1: test inserts the duplicated record into the csv file"
+filename = File.dirname(File.dirname(File.expand_path(__FILE__))) + '/payment-number/existing_payment_reference_numbers_x_4.csv'
+exist_numbers = PaymentNum.read('/payment-number/existing_payment_reference_numbers_x_4.csv')
+insert_record = "4767530318"
 while (exist_numbers.include?(insert_record)) do 
-    puts "Duplicated!"
-    insert_record = new_pay.generate(10, 4)
+    puts "Duplicated! #{insert_record}"
+    insert_record = PaymentNum.new.generate(10, 4)
 end 
 
 CSV.open(filename, "ab") do |csv|
@@ -86,36 +87,14 @@ CSV.open(filename, "ab") do |csv|
     # insert the new row to existing csv file
     csv << row
     end        
-puts insert_record
+puts "newly generated payment number: #{insert_record}"
+puts "========================================================================"
 
-# # use built-in CSV library to read csv file and save the existing numbers in an array exist_numbers
-# require 'csv'
-
-# filename = File.dirname(File.dirname(File.expand_path(__FILE__))) + '/payment-number/test_demo.csv'
-# exist_numbers = []
-# CSV.foreach(filename) do |row|
-#   exist_numbers << row[0]
-# end
-
-# # generate a new payment numbers
-# insert_record = generate(10,4)
-
-# # check if this payment number is already exsited, if so generate another one until generate a non exsiting one
-# while (exist_numbers.include?(insert_record)) do 
-#     insert_record = generate(10,4)
-    
-# end 
-
-# # write to csv file as a new row
-# CSV.open(filename, "ab") do |csv|
-#     # generate a new row with value of new payment numbers     
-#     row = [].push(insert_record)
-#     # insert the new row to existing csv file
-#     csv << row
-# end
-
-
-
-# write test
-
-# https://snippets.aktagon.com/snippets/246-how-to-parse-csv-data-with-ruby
+# ===============================================================
+puts "Test Case 2: generate a valid payment number and it can be saved to csv file"
+puts "=========================== previous csv file ==========================="
+puts PaymentNum.read('/payment-number/existing_payment_reference_numbers_x_4.csv')
+puts "========================================================================="
+PaymentNum.new.save('/payment-number/existing_payment_reference_numbers_x_4.csv', 10, 4)
+puts "================= file with new generated payment number ================="
+puts PaymentNum.read('/payment-number/existing_payment_reference_numbers_x_4.csv')
