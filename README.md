@@ -22,3 +22,10 @@ coverage.
 - Please don’t just try random numbers but consider performance in your solution
 - Please add some comments to illustrate your considerations to a fellow developer
 - Bonus: Encapsulate your solution in a class or module to be reused in other code-bases
+- 
+# how to run the test 
+1. There are two test cases at the bottom of gen_pay_num.rb
+2. existing_payment_reference_numbers_x_4.csv is provided csv file which has a large number of payment numbers
+3. test_demo.csv has a small amount of sample payment numbers I have created for test convenience
+4. You can choose any csv files to run the tests. Make sure to change the file name in line 76,77,96,98,100 accordingly
+5. In the terminal run "ruby gen_pay_num.rb"
